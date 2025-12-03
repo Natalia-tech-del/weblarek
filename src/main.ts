@@ -3,6 +3,9 @@ import { ProductCatalog } from './components/models/ProductCatalog';
 import { ShoppingCart } from './components/models/ShoppingCart';
 import { Customer } from './components/models/Customer';
 import { apiProducts } from './utils/data';
+import { Api } from './components/base/Api';
+import { WebLarekApi } from './components/communication/WebLarekApi';
+
 
 // проверка рабоспособности класса ProductCatalog
 const productsModel = new ProductCatalog();
@@ -49,3 +52,25 @@ customerModel.clearCustomerData();
 console.log('Вывод данных покупателя после очистки', customerModel.getCustomerData());
 console.log('Валидация данных после очистки', customerModel.validationData());
 
+// проверка рабоспособности класса WebLarekApi
+const BASE_URL = import.meta.env.VITE_API_ORIGIN;
+const baseApi = new Api(BASE_URL);
+const webApiModel = new WebLarekApi(baseApi);
+console.log('Используется адрес:', baseApi);
+async function loadProducts() {
+    try {
+        const productsCatalog = new ProductCatalog();
+        const productsFromServer = await webApiModel.getProducts();
+        console.log('Данные, полученные с сервера', productsFromServer);
+        productsCatalog.setItems(productsFromServer); 
+        console.log('Массив товаров из каталога с сервера:', productsCatalog.getItems());
+        console.log('Получение товара по его идентификатору:', productsCatalog.getProductById("c101ab44-ed99-4a54-990d-47aa2bb4e7d9"));
+        console.log('Получение товара по его идентификатору (нет такого):', productsCatalog.getProductById("4a54-990d-47aa2bb4e7d9"));
+        console.log('Получение товара для подробного отображения (null):', productsCatalog.getSelectedProduct());
+        productsCatalog.selectProduct(productsFromServer[3]);
+        console.log('Получение товара для подробного отображения:', productsCatalog.getSelectedProduct());
+    } catch (error){
+        console.log('Ошибка загрузки', error);
+    }
+}
+loadProducts();
