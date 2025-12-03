@@ -9,11 +9,23 @@ export class ProductCatalog {
         this.selectedProduct = null;
     }
 
-    getItems(): IProduct[];
-    setItems(items: IProduct[]): void;
-    getProductById(id: string): IProduct | undefined;
-    selectProduct(product: IProduct): void;
-    getSelectedProduct(): IProduct | null;
+    getItems(): IProduct[] {
+        return this.products;  
+    }
 
+    setItems(items: IProduct[]): void {
+        this.products = items;
+    }
 
+    getProductById(id: string): IProduct | undefined {
+        return this.products.find((item: IProduct) => item.id === id);
+    }
+
+    selectProduct(product: IProduct): void {
+        this.selectedProduct = product;
+    }
+
+    getSelectedProduct(): IProduct | null {
+        return this.selectedProduct;
+    }
 }
