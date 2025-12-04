@@ -1,4 +1,4 @@
-import { TPayment, IBuyer, ValidationErrors } from "../../types";
+import { TPayment, IBuyer, IValidationErrors } from "../../types";
 
 export class Customer {
     private payment: TPayment; 
@@ -44,8 +44,8 @@ export class Customer {
         this.address = '';
     } 
 
-    validationData(): ValidationErrors {
-        const errors: ValidationErrors = {};
+    validationData(): IValidationErrors {
+        const errors: IValidationErrors = {};
         if (this.payment === '') {
           errors.payment = 'Не выбран вид оплаты';
         }

@@ -7,7 +7,7 @@ export class ShoppingCart {
         this.shoppingProducts = [];
     }
     
-    getShoppingProducts(): IProduct[] {
+    getShoppingProducts(): IProduct[] {
         return this.shoppingProducts;
     }
 
@@ -15,11 +15,8 @@ export class ShoppingCart {
         this.shoppingProducts.push(product);
     }
 
-    deleteProductFromCart(id: string): void {
-        const index: number = this.shoppingProducts.findIndex((item: IProduct) => item.id === id);
-        if (index !== -1) {
-            this.shoppingProducts.splice(index, 1);
-        }    
+    deleteProductFromCart(id: string): void { 
+        this.shoppingProducts = this.shoppingProducts.filter((item: IProduct) => item.id !== id);
     }
 
     clearShoppingCart(): void {

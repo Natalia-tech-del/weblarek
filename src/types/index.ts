@@ -44,7 +44,7 @@ export interface IOrderError {
 
 export type IResultOrder = IOrderSuccess | IOrderError;
 
-export interface ValidationErrors {
+export interface IValidationErrors {
     payment?: string;     // ошибка для поля: способ оплаты
     email?: string;       // ошибка для поля: электронная почта покупателя
     phone?: string;       // ошибка для поля: телефон покупателя
