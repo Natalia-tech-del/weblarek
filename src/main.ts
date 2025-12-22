@@ -73,4 +73,6 @@ async function loadProducts() {
         console.log('Ошибка загрузки', error);
     }
 }
+
+
 loadProducts();
