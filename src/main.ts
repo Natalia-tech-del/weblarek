@@ -74,5 +74,4 @@ async function loadProducts() {
     }
 }
 
-
 loadProducts();
