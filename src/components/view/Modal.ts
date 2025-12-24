@@ -19,6 +19,12 @@ export class Modal extends Component<IModal> {
     this.closeButton.addEventListener('click', () => {
       this.events.emit('modal:close');
     });
+
+    this.container.addEventListener('click', (evt: MouseEvent) => {
+      if ((evt.target instanceof Element) && (!(evt.target.closest('.modal__container')))) {
+        this.events.emit('modal:close');
+      }
+    });
   }
 
   set content(element: HTMLElement) {
@@ -27,5 +33,13 @@ export class Modal extends Component<IModal> {
     } else {
     this.contentElement.replaceChildren(element);
     }
+  }
+
+  open() {
+    this.container.classList.add('modal_active');
+  }
+
+  close() {
+    this.container.classList.remove('modal_active');
   }
 }
