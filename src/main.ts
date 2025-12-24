@@ -5,6 +5,7 @@ import { Customer } from './components/models/Customer';
 import { apiProducts } from './utils/data';
 import { Api } from './components/base/Api';
 import { WebLarekApi } from './components/communication/WebLarekApi';
+import {CDN_URL} from './utils/constants'
 
 
 // проверка рабоспособности класса ProductCatalog
@@ -53,8 +54,7 @@ console.log('Вывод данных покупателя после очист�
 console.log('Валидация данных после очистки', customerModel.validationData());
 
 // проверка рабоспособности класса WebLarekApi
-const BASE_URL = import.meta.env.VITE_API_ORIGIN;
-const baseApi = new Api(BASE_URL);
+const baseApi = new Api(CDN_URL);
 const webApiModel = new WebLarekApi(baseApi);
 console.log('Используется адрес:', baseApi);
 async function loadProducts() {

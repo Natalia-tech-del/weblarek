@@ -4,7 +4,10 @@ import { ensureElement } from "../../../utils/utils";
 import { TCard, Card } from "./Card";
 
 type CategoryKey = keyof typeof categoryMap;
-export type TCardCatalog = TCard & Pick<IProduct, 'image' | 'category'>;
+export type TCardCatalog = TCard & 
+  Pick<IProduct, 'category'> & {
+    image: { src: string; alt: string };
+  };
 
 export class CardCatalog extends Card<TCardCatalog> {
   protected imageElement: HTMLImageElement;
@@ -29,7 +32,7 @@ export class CardCatalog extends Card<TCardCatalog> {
     }
   }
 
-  set image(src: string) {
-    this.setImage(this.imageElement, src, this.title);
+  set image(data: {src: string, alt: string}) {
+    this.setImage(this.imageElement, data.src, data.alt);
   }
 }
