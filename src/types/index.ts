@@ -51,3 +51,8 @@ export interface IValidationErrors {
     address?: string;     // ошибка для поля: адрес доставки
 }
 
+export interface ICardActions {
+    onClick: (event: MouseEvent) => void;
+}
+
+
