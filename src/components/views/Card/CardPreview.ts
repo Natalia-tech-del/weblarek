@@ -49,5 +49,10 @@ export class CardPreview extends Card<TCardPreview> {
 
   set buttonText(value: string) {
     this.cardButton.textContent = value;
+    if (value ==='Недоступно') {
+      this.cardButton.disabled = true;
+    } else {
+      this.cardButton.disabled = false;
+    }
   }
 }
