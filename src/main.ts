@@ -6,6 +6,8 @@ import { apiProducts } from './utils/data';
 import { Api } from './components/base/Api';
 import { WebLarekApi } from './components/communication/WebLarekApi';
 import {CDN_URL} from './utils/constants'
+import { Header } from './components/views/Header';
+import { EventEmitter } from './components/base/Events';
 
 
 // проверка рабоспособности класса ProductCatalog
@@ -54,6 +56,7 @@ console.log('Вывод данных покупателя после очист�
 console.log('Валидация данных после очистки', customerModel.validationData());
 
 // проверка рабоспособности класса WebLarekApi
+/*
 const baseApi = new Api(CDN_URL);
 const webApiModel = new WebLarekApi(baseApi);
 console.log('Используется адрес:', baseApi);
@@ -74,4 +77,14 @@ async function loadProducts() {
     }
 }
 
-loadProducts();
+loadProducts(); */
+// Тестирование компонентов слоя Представления
+const gallery = document.querySelector('main.gallery') as HTMLElement;
+const event = new EventEmitter();
+// Header
+const headerContainer = document.querySelector<HTMLElement>('.header');
+if (!headerContainer) {
+    throw new Error('Ошибка, элемент не найден');
+}
+const header = new Header(event, headerContainer);
+gallery.replaceChildren(header.render());

@@ -455,7 +455,9 @@ interface ICardActions {
 type TCardPreview = TCard & 
   Pick<IProduct, 'category' | 'description'> & {
     image: { src: string; alt: string };
-    buttonText: string};
+    buttonText: string;
+    buttonDisabled: boolean;
+  };
 ```
 
 #### Класс CardPreview (компонент Карточка с полной информацией)
@@ -480,7 +482,8 @@ type TCardPreview = TCard &
 `set category(value: string)` - Сеттер, обновляет текстовое содержимое элемента, отображая категорию товара, а также меняет класс для отображения элемента, соответствующего нужной категории. 
 `set image(data: {src: string, alt: string})` - Сеттер, обновляет содержимое элемента, отображая картинку. 
 `set description(value: string)` - Сеттер, обновляет содержимое элемента, отображая полную информацию о товаре. 
-`set buttonText(value: string)` - Сеттер, обновляет текстовое содержимое кнопки. Если текст кнопки "Недоступно", то кнопка будет заблокирована.
+`set buttonText(value: string)` - Сеттер, обновляет текстовое содержимое кнопки. 
+`set buttonDisabled(value: boolean)` - Сеттер, обновляет доступность или недоступность кнопки.
 
 #### type TCardBasket
 *Назначение:* описывает тип объекта карточки в корзине. Использует тип TCard.
@@ -518,6 +521,7 @@ interface IBasket {
   basketList: HTMLElement[];          // список товаров в корзине 
   buttonDisabled: boolean;          // блокировка кнопки 
   basketPrice: number;          // стоимость заказа в корзине
+  basketEmpty: boolean;          // переключение видимости надписи "Корзина пуста" 
 }
 ```
 
@@ -537,7 +541,8 @@ interface IBasket {
 `events: IEvents` - брокер событий для взаимодействия с Презентером.
 
 Методы класса:  
-`set basketList(items: HTMLElement[])` - Сеттер, обновляет содержимое элемента, отображая содержимое списка товаров в корзине.
+`set basketList(items: HTMLElement[])` - Сеттер, обновляет содержимое элемента, отображая содержимое списка товаров в корзине. Если товаров нет - кнопка "Оформить недоступна" и выводится надпись "Корзина пуста".
+`set basketEmpty(value: boolean)` - Сеттер, переключает видимость элемента с надписью "Корзина пуста".
 `set buttonDisabled(value: boolean)` - Сеттер, обновляет доступность/недоступность кнопки.
 `set basketPrice(value: number)` - Сеттер, обновляет текстовое содержимое элемента, в котором выводится стоимость товаров в корзине.
 `render(data?: Partial<IBasket>): HTMLElement` - Метод класса, унаследован от базового класса Component. Он принимает данные, соответствующие интерфейсу `IBasket`, копирует эти данные в поля экземпляра класса, срабатывают сеттеры и таким образом обновляется DOM-элемент. Возвращает ссылку на DOM-элемент.

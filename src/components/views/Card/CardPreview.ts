@@ -7,7 +7,9 @@ import { IProduct, CategoryKey, ICardActions } from "../../../types";
 export type TCardPreview = TCard & 
   Pick<IProduct, 'category' | 'description'> & {
     image: { src: string; alt: string };
-    buttonText: string};
+    buttonText: string;
+    buttonDisabled: boolean;
+  };
 
 export class CardPreview extends Card<TCardPreview> {
   protected imageElement: HTMLImageElement;
@@ -49,10 +51,9 @@ export class CardPreview extends Card<TCardPreview> {
 
   set buttonText(value: string) {
     this.cardButton.textContent = value;
-    if (value ==='Недоступно') {
-      this.cardButton.disabled = true;
-    } else {
-      this.cardButton.disabled = false;
-    }
+  }
+
+  set buttonDisabled(value: boolean){
+    this.cardButton.disabled = value;
   }
 }
