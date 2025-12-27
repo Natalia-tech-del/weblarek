@@ -1,4 +1,4 @@
-import { createElement, ensureElement } from "../../utils/utils";
+import { ensureElement } from "../../utils/utils";
 import { Component } from "../base/Component";
 import { IEvents } from "../base/Events";
 
@@ -6,12 +6,10 @@ interface IBasket {
   basketList: HTMLElement[];
   buttonDisabled: boolean;
   basketPrice: number;
-  basketEmpty: boolean;
 }
 
 export class Basket extends Component<IBasket> {
   protected basketListElement: HTMLElement;
-  protected basketEmptyElement: HTMLElement;
   protected checkoutButton: HTMLButtonElement;
   protected priceElement: HTMLElement;
 
@@ -19,12 +17,6 @@ export class Basket extends Component<IBasket> {
     super(container);
     
     this.basketListElement = ensureElement<HTMLElement>('.basket__list', this.container);
-    this.basketEmptyElement = createElement<HTMLElement>('div', {
-      className: 'basket__empty',
-      textContent: 'Корзина пуста'
-    });
-    this.basketEmptyElement.hidden = true;
-    this.basketListElement.after(this.basketEmptyElement);
     this.priceElement = ensureElement<HTMLElement>('.basket__price', this.container);
     this.checkoutButton = ensureElement<HTMLButtonElement>('.basket__button', this.container);
 
@@ -36,11 +28,6 @@ export class Basket extends Component<IBasket> {
   set basketList(items: HTMLElement[]) {
     this.basketListElement.replaceChildren(...items);
     this.buttonDisabled = items.length === 0;
-    this.basketEmpty = items.length === 0;
-  }
-
-  set basketEmpty(value: boolean) {
-    this.basketEmptyElement.hidden = !value;
   }
 
   set buttonDisabled(value: boolean){

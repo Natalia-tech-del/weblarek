@@ -7,7 +7,15 @@ import { Api } from './components/base/Api';
 import { WebLarekApi } from './components/communication/WebLarekApi';
 import {CDN_URL} from './utils/constants'
 import { Header } from './components/views/Header';
+import { Gallery } from './components/views/Gallery';
 import { EventEmitter } from './components/base/Events';
+import { Modal } from './components/views/Modal';
+import { cloneTemplate } from './utils/utils';
+import { OrderSuccess } from './components/views/OrderSuccess';
+import { CardCatalog } from './components/views/Card/СardСatalog';
+import { CardPreview } from './components/views/Card/CardPreview';
+import { CardBasket } from './components/views/Card/CardBasket';
+import { Basket } from './components/views/Basket';
 
 
 // проверка рабоспособности класса ProductCatalog
@@ -56,7 +64,7 @@ console.log('Вывод данных покупателя после очист�
 console.log('Валидация данных после очистки', customerModel.validationData());
 
 // проверка рабоспособности класса WebLarekApi
-/*
+
 const baseApi = new Api(CDN_URL);
 const webApiModel = new WebLarekApi(baseApi);
 console.log('Используется адрес:', baseApi);
@@ -77,14 +85,72 @@ async function loadProducts() {
     }
 }
 
-loadProducts(); */
+loadProducts(); 
+
 // Тестирование компонентов слоя Представления
-const gallery = document.querySelector('main.gallery') as HTMLElement;
+const galleryContainer = document.querySelector('main.gallery') as HTMLElement;
+const gallery = new Gallery(galleryContainer);
 const event = new EventEmitter();
-// Header
-const headerContainer = document.querySelector<HTMLElement>('.header');
-if (!headerContainer) {
-    throw new Error('Ошибка, элемент не найден');
-}
-const header = new Header(event, headerContainer);
-gallery.replaceChildren(header.render());
+gallery.render();
+
+// Modal
+const modalContainer = document.querySelector('.modal') as HTMLElement;
+const modal = new Modal(event, modalContainer);
+
+// CardCatalog
+const cardCatalogContainer = cloneTemplate('#card-catalog');
+const cardCatalog = new CardCatalog(cardCatalogContainer);
+cardCatalog.category = 'хард-скил';
+cardCatalog.title = '11';
+cardCatalog.price = 30;
+cardCatalog.image = {
+  src: './src/images/Subtract.svg',  
+  alt: "+1 час в сутках"
+};
+gallery.catalog = [cardCatalog.render()];
+
+/* Modal и OrderSuccess
+const orderSuccessContainer = cloneTemplate('#success');
+const orderSuccess = new OrderSuccess(event, orderSuccessContainer);
+orderSuccess.successCost = 3;
+modal.content = orderSuccess.render();
+*/
+
+// Modal и CardPreview
+/*
+const cardPreviewContainer = cloneTemplate('#card-preview');
+const cardPreview = new CardPreview(cardPreviewContainer);
+cardPreview.category = 'хард-скил';
+cardPreview.title = '11';
+cardPreview.price = 30;
+cardPreview.image = {
+  src: './src/images/Subtract.svg',  
+  alt: "+1 час в сутках"
+};
+cardPreview.description = '11111';
+cardPreview.buttonText = 'hjvjh';
+cardPreview.buttonDisabled = true;
+modal.content = cardPreview.render();
+modal.open();
+*/
+
+// Modal Basket и  CardBasket
+const basketContainer = cloneTemplate('#basket');
+const cardBasketContainer = cloneTemplate('#card-basket');
+const cardBasket = new CardBasket(cardBasketContainer);
+cardBasket.index = 1;
+// Проверка когда в корзине есть товар
+const basket = new Basket(event, basketContainer);
+/*
+basket.basketList = [cardBasket.render()];
+basket.basketPrice = 30;
+basket.buttonDisabled = false;
+*/
+// Проверка когда корзина пустая
+basket.basketList = [];
+
+modal.content = basket.render();
+modal.open();
+
+
+
