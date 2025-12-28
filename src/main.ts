@@ -16,6 +16,8 @@ import { CardCatalog } from './components/views/Card/СardСatalog';
 import { CardPreview } from './components/views/Card/CardPreview';
 import { CardBasket } from './components/views/Card/CardBasket';
 import { Basket } from './components/views/Basket';
+import { FormOrder } from './components/views/Form/FormOrder';
+import { FormContacts } from './components/views/Form/FormContacts';
 
 
 // проверка рабоспособности класса ProductCatalog
@@ -135,21 +137,44 @@ modal.open();
 */
 
 // Modal Basket и  CardBasket
+/*
 const basketContainer = cloneTemplate('#basket');
 const cardBasketContainer = cloneTemplate('#card-basket');
 const cardBasket = new CardBasket(cardBasketContainer);
 cardBasket.index = 1;
 // Проверка когда в корзине есть товар
 const basket = new Basket(event, basketContainer);
-/*
+
 basket.basketList = [cardBasket.render()];
 basket.basketPrice = 30;
 basket.buttonDisabled = false;
-*/
+
 // Проверка когда корзина пустая
 basket.basketList = [];
 
 modal.content = basket.render();
+modal.open();
+*/ 
+// Modal и  FormOrder
+/*
+const formOrderContainer = cloneTemplate('#order') as HTMLFormElement;
+const formOrder = new FormOrder(event, formOrderContainer);
+formOrder.errors = 'ddd';
+formOrder.buttonDisabled = false;
+formOrder.address = '';
+formOrder.payment = 'card';
+modal.content = formOrder.render();
+modal.open();
+*/
+
+// Modal и  FormContacts
+const formContactsContainer = cloneTemplate('#contacts') as HTMLFormElement;
+const formContacts = new FormContacts(event, formContactsContainer);
+formContacts.buttonDisabled = false;
+formContacts.email = '';
+formContacts.errors = 'dsd';
+formContacts.phone = '';
+modal.content = formContacts.render();
 modal.open();
 
 
