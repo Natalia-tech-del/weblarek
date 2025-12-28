@@ -1,10 +1,11 @@
 import { IProduct } from "../../types";
+import { IEvents } from "../base/Events";
 
 export class ProductCatalog {
     private products: IProduct[];
     private selectedProduct: IProduct | null;
 
-    constructor() {
+    constructor(protected events: IEvents) {
         this.products = []; 
         this.selectedProduct = null;
     }
@@ -15,6 +16,7 @@ export class ProductCatalog {
 
     setItems(items: IProduct[]): void {
         this.products = items;
+        this.events.emit('catalog:changed');
     }
 
     getProductById(id: string): IProduct | undefined {
@@ -23,6 +25,7 @@ export class ProductCatalog {
 
     selectProduct(product: IProduct): void {
         this.selectedProduct = product;
+        this.events.emit('product:selected');
     }
 
     getSelectedProduct(): IProduct | null {

@@ -19,7 +19,7 @@ import { Basket } from './components/views/Basket';
 import { FormOrder } from './components/views/Form/FormOrder';
 import { FormContacts } from './components/views/Form/FormContacts';
 
-
+/*
 // проверка рабоспособности класса ProductCatalog
 const productsModel = new ProductCatalog();
 productsModel.setItems(apiProducts.items); 
@@ -88,6 +88,7 @@ async function loadProducts() {
 }
 
 loadProducts(); 
+*/
 
 // Тестирование компонентов слоя Представления
 const galleryContainer = document.querySelector('main.gallery') as HTMLElement;
