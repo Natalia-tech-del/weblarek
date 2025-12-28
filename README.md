@@ -644,3 +644,4 @@ interface IFormContacts extends IForm, Pick<IBuyer, 'email' | 'phone'> {}
 `order:payment:cash` - обработка события выбранного пользователем способа оплаты cash формы FormOrder.
 `order:address:change` - обработка события ввода данных пользователем в поле ввода адреса формы FormOrder.
 `order:success` - обработка события нажатия пользователем "За новыми покупками" после успешного оформления заказа.
+`customer:changed` - обработка события - данные покупателя изменены.
