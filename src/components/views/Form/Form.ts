@@ -1,5 +1,6 @@
 import { ensureElement } from "../../../utils/utils";
 import { Component } from "../../base/Component";
+import { IEvents } from "../../base/Events";
 
 export interface IForm {
   errors: string;
@@ -9,14 +10,17 @@ export interface IForm {
 export abstract class Form<T extends IForm> extends Component<T> {
   protected formSubmitButton: HTMLButtonElement;
   protected errorsFormElement: HTMLElement;
-  protected formElement: HTMLFormElement;
-
-  constructor(container: HTMLElement) {
+  
+  constructor(protected events: IEvents, container: HTMLFormElement) {
     super(container);
-    
-    this.formElement = this.container as HTMLFormElement;
-    this.formSubmitButton = ensureElement<HTMLButtonElement>('button[type="submit"]', this.formElement);
-    this.errorsFormElement = ensureElement<HTMLElement>('.form__errors', this.formElement);
+
+    this.formSubmitButton = ensureElement<HTMLButtonElement>('button[type="submit"]', this.container);
+    this.errorsFormElement = ensureElement<HTMLElement>('.form__errors', this.container);
+
+    this.container.addEventListener('submit', (evt: Event) => {
+      evt.preventDefault();
+      this.events.emit(`${this.container.getAttribute('name')}:submit`);
+    });
   }
 
   set errors(value: string) {
