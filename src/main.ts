@@ -189,21 +189,12 @@ const gallery = new Gallery(galleryContainer);
 
 events.on('catalog:changed', () => {
     const catalogItems = productsCatalog.getItems();
-   	gallery.catalog = catalogItems.map(item => {
+   	const itemCards = catalogItems.map(item => {
         const cardCatalogContainer = cloneTemplate('#card-catalog');
         const cardCatalog = new CardCatalog(cardCatalogContainer);
-        cardCatalog.category = item.category;
-        cardCatalog.image = {src: CDN_URL + item.image, alt: item.title};
-        if (item.price) {
-          cardCatalog.price = `${item.price} синапсов`;
-        } else {
-          cardCatalog.price = 'Бесценно';  
-        }
-        cardCatalog.title = item.title;
-        return cardCatalog.render();
+        return cardCatalog.render({...item, image: {src: CDN_URL + item.image, alt: item.title}});
     })
-    console.log(gallery.catalog);
-    gallery.render();
+    gallery.render({ catalog: itemCards });
 })
 
 async function loadProducts() {
