@@ -2,7 +2,7 @@ import { ensureElement } from "../../../utils/utils";
 import { Component } from "../../base/Component";
 import { IProduct } from "../../../types";
 
-export type TCard = Pick<IProduct, 'title' | 'price'>;
+export type TCard = Pick<IProduct, 'title'> & {price: string};
 
 export abstract class Card<T extends TCard> extends Component<T> {
   protected cardTitleElement: HTMLElement;
@@ -19,7 +19,7 @@ export abstract class Card<T extends TCard> extends Component<T> {
     this.cardTitleElement.textContent = value;
   }
 
-  set price(value: number) {
-    this.cardPriceElement.textContent = `${value} синапсов`;
+  set price(value: string) {
+    this.cardPriceElement.textContent = value;
   }
 }

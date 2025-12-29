@@ -5,7 +5,7 @@ import { Customer } from './components/models/Customer';
 import { apiProducts } from './utils/data';
 import { Api } from './components/base/Api';
 import { WebLarekApi } from './components/communication/WebLarekApi';
-import {CDN_URL} from './utils/constants'
+import { CDN_URL, API_URL } from './utils/constants'
 import { Header } from './components/views/Header';
 import { Gallery } from './components/views/Gallery';
 import { EventEmitter } from './components/base/Events';
@@ -89,12 +89,8 @@ async function loadProducts() {
 
 loadProducts(); 
 */
-
+/*
 // Тестирование компонентов слоя Представления
-const galleryContainer = document.querySelector('main.gallery') as HTMLElement;
-const gallery = new Gallery(galleryContainer);
-const event = new EventEmitter();
-gallery.render();
 
 // Modal
 const modalContainer = document.querySelector('.modal') as HTMLElement;
@@ -167,7 +163,7 @@ formOrder.payment = 'card';
 modal.content = formOrder.render();
 modal.open();
 */
-
+/*
 // Modal и  FormContacts
 const formContactsContainer = cloneTemplate('#contacts') as HTMLFormElement;
 const formContacts = new FormContacts(event, formContactsContainer);
@@ -177,6 +173,47 @@ formContacts.errors = 'dsd';
 formContacts.phone = '';
 modal.content = formContacts.render();
 modal.open();
+*/
 
+const baseApi = new Api(API_URL);
+const webApiModel = new WebLarekApi(baseApi);
+
+const events = new EventEmitter();
+
+const productsCatalog = new ProductCatalog(events);
+const shoppingCartModel = new ShoppingCart(events);
+const customerModel = new Customer(events);
+
+const galleryContainer = document.querySelector('main.gallery') as HTMLElement;
+const gallery = new Gallery(galleryContainer);
+
+events.on('catalog:changed', () => {
+    const catalogItems = productsCatalog.getItems();
+   	gallery.catalog = catalogItems.map(item => {
+        const cardCatalogContainer = cloneTemplate('#card-catalog');
+        const cardCatalog = new CardCatalog(cardCatalogContainer);
+        cardCatalog.category = item.category;
+        cardCatalog.image = {src: CDN_URL + item.image, alt: item.title};
+        if (item.price) {
+          cardCatalog.price = `${item.price} синапсов`;
+        } else {
+          cardCatalog.price = 'Бесценно';  
+        }
+        cardCatalog.title = item.title;
+        return cardCatalog.render();
+    })
+    console.log(gallery.catalog);
+    gallery.render();
+})
+
+async function loadProducts() {
+    try {
+        productsCatalog.setItems(await webApiModel.getProducts()); 
+    } catch (error){
+        console.log('Ошибка загрузки', error);
+    }
+}
+
+loadProducts(); 
 
 

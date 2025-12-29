@@ -654,3 +654,5 @@ interface IFormContacts extends IForm, Pick<IBuyer, 'email' | 'phone'> {}
 `catalog:changed` - обработка события - данные каталога товаров изменены.
 `product:selected` - обработка выбора товара для детального просмотра.
 `cart:changed` - обработка события - данные корзины изменены.
+
+### Презентер
