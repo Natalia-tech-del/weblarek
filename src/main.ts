@@ -162,10 +162,15 @@ events.on('catalog:changed', () => {
 events.on('card:select', (item: IProduct) => { 
     productsCatalog.selectProduct(item);
     let buttonText;
-    if (item.price) {
-        buttonText = 'Купить';
-    } else {
+    const inCart = shoppingCartModel.isProductInCart(item.id);
+    console.log(productsCatalog.getSelectedProduct(), inCart);
+
+    if (!item.price) {
         buttonText = 'Недоступно';
+    } else  if (inCart) {
+        buttonText = "Удалить из корзины";
+    } else {
+        buttonText = 'Купить';
     }
     modal.render({ content: cardPreview.render({...item, 
         image: {src: CDN_URL + item.image, alt: item.title},
@@ -179,6 +184,21 @@ events.on('modal:close', () => {
     modal.close();
 });
 
+events.on('cardPreview:buttonClick', () => {
+    const productSelected = productsCatalog.getSelectedProduct();
+    
+    if (!productSelected) {
+        return;
+    }
+
+    const inCart = shoppingCartModel.isProductInCart(productSelected.id);
+    if (inCart) {
+        shoppingCartModel.deleteProductFromCart(productSelected.id);
+    } else {
+        shoppingCartModel.addProductToCart(productSelected);
+    }
+});
+
 //удалить, использую для проверки
 shoppingCartModel.addProductToCart(apiProducts.items[1]);
 shoppingCartModel.addProductToCart(apiProducts.items[2]);
@@ -189,12 +209,13 @@ events.on('basket:open', () => {
 
     const itemCardsBasket = basketItems.map((item, index) => {
         const cardBasketContainer = cloneTemplate('#card-basket');
-        //добавить обработчик
-        const cardBasket = new CardBasket(cardBasketContainer);
+        //Проверить обработчик
+        const cardBasket = new CardBasket(cardBasketContainer, {
+            onClick: () => shoppingCartModel.deleteProductFromCart(item.id)
+        });
         return cardBasket.render({...item, index: index + 1});
     });
     modal.render({ content: basket.render({ basketList: itemCardsBasket,
-        buttonDisabled: true, // исправить
         basketPrice: shoppingCartModel.getCostShoppingProducts()
      })});
     modal.open();
