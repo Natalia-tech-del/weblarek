@@ -18,6 +18,7 @@ import { CardBasket } from './components/views/Card/CardBasket';
 import { Basket } from './components/views/Basket';
 import { FormOrder } from './components/views/Form/FormOrder';
 import { FormContacts } from './components/views/Form/FormContacts';
+import { IProduct } from './types';
 
 /*
 // проверка рабоспособности класса ProductCatalog
@@ -92,22 +93,6 @@ loadProducts();
 /*
 // Тестирование компонентов слоя Представления
 
-// Modal
-const modalContainer = document.querySelector('.modal') as HTMLElement;
-const modal = new Modal(event, modalContainer);
-
-// CardCatalog
-const cardCatalogContainer = cloneTemplate('#card-catalog');
-const cardCatalog = new CardCatalog(cardCatalogContainer);
-cardCatalog.category = 'хард-скил';
-cardCatalog.title = '11';
-cardCatalog.price = 30;
-cardCatalog.image = {
-  src: './src/images/Subtract.svg',  
-  alt: "+1 час в сутках"
-};
-gallery.catalog = [cardCatalog.render()];
-
 /* Modal и OrderSuccess
 const orderSuccessContainer = cloneTemplate('#success');
 const orderSuccess = new OrderSuccess(event, orderSuccessContainer);
@@ -115,43 +100,6 @@ orderSuccess.successCost = 3;
 modal.content = orderSuccess.render();
 */
 
-// Modal и CardPreview
-/*
-const cardPreviewContainer = cloneTemplate('#card-preview');
-const cardPreview = new CardPreview(cardPreviewContainer);
-cardPreview.category = 'хард-скил';
-cardPreview.title = '11';
-cardPreview.price = 30;
-cardPreview.image = {
-  src: './src/images/Subtract.svg',  
-  alt: "+1 час в сутках"
-};
-cardPreview.description = '11111';
-cardPreview.buttonText = 'hjvjh';
-cardPreview.buttonDisabled = true;
-modal.content = cardPreview.render();
-modal.open();
-*/
-
-// Modal Basket и  CardBasket
-/*
-const basketContainer = cloneTemplate('#basket');
-const cardBasketContainer = cloneTemplate('#card-basket');
-const cardBasket = new CardBasket(cardBasketContainer);
-cardBasket.index = 1;
-// Проверка когда в корзине есть товар
-const basket = new Basket(event, basketContainer);
-
-basket.basketList = [cardBasket.render()];
-basket.basketPrice = 30;
-basket.buttonDisabled = false;
-
-// Проверка когда корзина пустая
-basket.basketList = [];
-
-modal.content = basket.render();
-modal.open();
-*/ 
 // Modal и  FormOrder
 /*
 const formOrderContainer = cloneTemplate('#order') as HTMLFormElement;
@@ -184,24 +132,79 @@ const productsCatalog = new ProductCatalog(events);
 const shoppingCartModel = new ShoppingCart(events);
 const customerModel = new Customer(events);
 
+const modalContainer = document.querySelector('.modal') as HTMLElement;
+const modal = new Modal(events, modalContainer);
+
+const headerContainer = document.querySelector('header.header') as HTMLElement;
+const header = new Header(events, headerContainer);
+
 const galleryContainer = document.querySelector('main.gallery') as HTMLElement;
 const gallery = new Gallery(galleryContainer);
+
+const cardPreviewContainer = cloneTemplate('#card-preview');
+const cardPreview = new CardPreview(events, cardPreviewContainer);
+
+const basketContainer = cloneTemplate('#basket');
+const basket = new Basket(events, basketContainer);
 
 events.on('catalog:changed', () => {
     const catalogItems = productsCatalog.getItems();
    	const itemCards = catalogItems.map(item => {
         const cardCatalogContainer = cloneTemplate('#card-catalog');
-        const cardCatalog = new CardCatalog(cardCatalogContainer);
+        const cardCatalog = new CardCatalog(cardCatalogContainer, {
+            onClick: () => events.emit('card:select', item)
+        });
         return cardCatalog.render({...item, image: {src: CDN_URL + item.image, alt: item.title}});
-    })
+    });
     gallery.render({ catalog: itemCards });
-})
+});
+
+events.on('card:select', (item: IProduct) => { 
+    productsCatalog.selectProduct(item);
+    let buttonText;
+    if (item.price) {
+        buttonText = 'Купить';
+    } else {
+        buttonText = 'Недоступно';
+    }
+    modal.render({ content: cardPreview.render({...item, 
+        image: {src: CDN_URL + item.image, alt: item.title},
+        buttonText,
+        buttonDisabled: !item.price
+    })})
+    modal.open();
+});
+
+events.on('modal:close', () => {
+    modal.close();
+});
+
+//удалить, использую для проверки
+shoppingCartModel.addProductToCart(apiProducts.items[1]);
+shoppingCartModel.addProductToCart(apiProducts.items[2]);
+//
+
+events.on('basket:open', () => {
+    const basketItems = shoppingCartModel.getShoppingProducts();
+
+    const itemCardsBasket = basketItems.map((item, index) => {
+        const cardBasketContainer = cloneTemplate('#card-basket');
+        //добавить обработчик
+        const cardBasket = new CardBasket(cardBasketContainer);
+        return cardBasket.render({...item, index: index + 1});
+    });
+    modal.render({ content: basket.render({ basketList: itemCardsBasket,
+        buttonDisabled: true, // исправить
+        basketPrice: shoppingCartModel.getCostShoppingProducts()
+     })});
+    modal.open();
+});
 
 async function loadProducts() {
     try {
         productsCatalog.setItems(await webApiModel.getProducts()); 
     } catch (error){
-        console.log('Ошибка загрузки', error);
+        console.error('Ошибка загрузки', error);
     }
 }
 

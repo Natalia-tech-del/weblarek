@@ -1,7 +1,8 @@
 import { categoryMap } from "../../../utils/constants";
 import { ensureElement } from "../../../utils/utils";
 import { TCard, Card } from "./Card";
-import { IProduct, CategoryKey, ICardActions } from "../../../types";
+import { IProduct, CategoryKey } from "../../../types";
+import { IEvents } from "../../base/Events";
 
 
 export type TCardPreview = TCard & 
@@ -17,7 +18,7 @@ export class CardPreview extends Card<TCardPreview> {
   protected textElement: HTMLElement;
   protected cardButton: HTMLButtonElement;
 
-  constructor(container: HTMLElement, actions?: ICardActions) {
+  constructor(protected events: IEvents, container: HTMLElement) {
     super(container);
     this.categoryElement = ensureElement<HTMLElement>('.card__category',this.container);
 
@@ -27,10 +28,9 @@ export class CardPreview extends Card<TCardPreview> {
 
     this.cardButton = ensureElement<HTMLButtonElement>('.card__button', this.container);
 
-    
-     if (actions?.onClick) {
-      this.cardButton.addEventListener('click', actions.onClick);
-    }
+    this.cardButton.addEventListener('click', () => {
+      this.events.emit('cardPreview:buttonClick');
+    });
   }
 
   set category(value: string) {
