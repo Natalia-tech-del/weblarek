@@ -19,7 +19,7 @@ export class Basket extends Component<IBasket> {
     this.basketListElement = ensureElement<HTMLElement>('.basket__list', this.container);
     this.priceElement = ensureElement<HTMLElement>('.basket__price', this.container);
     this.checkoutButton = ensureElement<HTMLButtonElement>('.basket__button', this.container);
-
+    this.buttonDisabled = true;
     this.checkoutButton.addEventListener('click', () => {
       this.events.emit('basket:checkout');
     });

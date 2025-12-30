@@ -17,7 +17,7 @@ import { CardBasket } from './components/views/Card/CardBasket';
 import { Basket } from './components/views/Basket';
 import { FormOrder } from './components/views/Form/FormOrder';
 import { FormContacts } from './components/views/Form/FormContacts';
-import { IOrder, IOrderSuccess, IProduct, IResultOrder } from './types';
+import { IOrder, IOrderSuccess, IProduct } from './types';
 
 const baseApi = new Api(API_URL);
 const webApiModel = new WebLarekApi(baseApi);
@@ -213,6 +213,4 @@ async function postOrder(data:IOrder) {
     }
 }
 
-loadProducts(); 
-
-
+loadProducts();
