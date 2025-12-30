@@ -640,10 +640,10 @@ interface IFormContacts extends IForm, Pick<IBuyer, 'email' | 'phone'> {}
 `basket:open` - обработка события открытия корзины.                                                  V
 `basket:checkout` - обработка события при нажатии на кнопку "Оформить" корзины.                      V
 `modal:close` - обработка события закрытия любого модального окна.                                   V
-`order:submit` - обработка сабмита формы FormOrder.
-`contacts:submit` - обработка сабмита формы FormContacts.
-`contacts:email:change` - обработка события ввода данных пользователем в поле ввода email формы FormContacts.
-`contacts:phone:change` - обработка события ввода данных пользователем в поле ввода телефона формы FormContacts.
+`order:submit` - обработка сабмита формы FormOrder.                                                  V
+`contacts:submit` - обработка сабмита формы FormContacts.                                            V
+`contacts:email:change` - обработка события ввода данных пользователем в поле ввода email формы FormContacts. V
+`contacts:phone:change` - обработка события ввода данных пользователем в поле ввода телефона формы FormContacts. V
 `order:payment:card` - обработка события выбранного пользователем способа оплаты card формы FormOrder.  V
 `order:payment:cash` - обработка события выбранного пользователем способа оплаты cash формы FormOrder.  V
 `order:address:change` - обработка события ввода данных пользователем в поле ввода адреса формы FormOrder. V
@@ -653,7 +653,7 @@ interface IFormContacts extends IForm, Pick<IBuyer, 'email' | 'phone'> {}
 
 
 #### Слой модели даных
-`customer:changed` - обработка события - данные покупателя изменены.
+`customer:changed` - обработка события - данные покупателя изменены.           V
 `catalog:changed` - обработка события - данные каталога товаров изменены.      V
 `cart:changed` - обработка события - данные корзины изменены.                  V
 

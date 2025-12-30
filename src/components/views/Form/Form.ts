@@ -4,7 +4,7 @@ import { Component } from "../../base/Component";
 import { IEvents } from "../../base/Events";
 
 export interface IForm {
-  errors: IValidationErrors;
+  errors: IValidationErrors | '';
   buttonDisabled: boolean;
 }
 
@@ -24,7 +24,11 @@ export abstract class Form<T extends IForm> extends Component<T> {
     });
   }
 
-  set errors(errors: IValidationErrors) {
+  set errors(errors: IValidationErrors | '') {
+    if (errors === '') {
+      this.errorsFormElement.textContent = errors;
+      return;
+    }
     const errorText = Object.values(errors).join('\n');
     this.errorsFormElement.textContent = errorText;
   }
