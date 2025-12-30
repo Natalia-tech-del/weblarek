@@ -102,14 +102,7 @@ modal.content = orderSuccess.render();
 
 // Modal и  FormOrder
 /*
-const formOrderContainer = cloneTemplate('#order') as HTMLFormElement;
-const formOrder = new FormOrder(event, formOrderContainer);
-formOrder.errors = 'ddd';
-formOrder.buttonDisabled = false;
-formOrder.address = '';
-formOrder.payment = 'card';
-modal.content = formOrder.render();
-modal.open();
+
 */
 /*
 // Modal и  FormContacts
@@ -147,6 +140,28 @@ const cardPreview = new CardPreview(events, cardPreviewContainer);
 const basketContainer = cloneTemplate('#basket');
 const basket = new Basket(events, basketContainer);
 
+const formOrderContainer = cloneTemplate('#order') as HTMLFormElement;
+const formOrder = new FormOrder(events, formOrderContainer);
+
+events.on('cart:changed', () => {
+    header.render({ counter: shoppingCartModel.getItemsCount()});
+
+    const basketItems = shoppingCartModel.getShoppingProducts();
+
+    const itemCardsBasket = basketItems.map((item, index) => {
+        const cardBasketContainer = cloneTemplate('#card-basket');
+        const cardBasket = new CardBasket(cardBasketContainer, {
+            onClick: () => {
+                shoppingCartModel.deleteProductFromCart(item.id);
+        }});
+        return cardBasket.render({...item, index: index + 1});
+    });
+    basket.render({ basketList: itemCardsBasket,
+        basketPrice: shoppingCartModel.getCostShoppingProducts()
+     });
+
+});
+
 events.on('catalog:changed', () => {
     const catalogItems = productsCatalog.getItems();
    	const itemCards = catalogItems.map(item => {
@@ -163,8 +178,7 @@ events.on('card:select', (item: IProduct) => {
     productsCatalog.selectProduct(item);
     let buttonText;
     const inCart = shoppingCartModel.isProductInCart(item.id);
-    console.log(productsCatalog.getSelectedProduct(), inCart);
-
+    
     if (!item.price) {
         buttonText = 'Недоступно';
     } else  if (inCart) {
@@ -192,33 +206,50 @@ events.on('cardPreview:buttonClick', () => {
     }
 
     const inCart = shoppingCartModel.isProductInCart(productSelected.id);
+
     if (inCart) {
         shoppingCartModel.deleteProductFromCart(productSelected.id);
     } else {
         shoppingCartModel.addProductToCart(productSelected);
     }
+    modal.close();
 });
 
-//удалить, использую для проверки
-shoppingCartModel.addProductToCart(apiProducts.items[1]);
-shoppingCartModel.addProductToCart(apiProducts.items[2]);
-//
-
 events.on('basket:open', () => {
-    const basketItems = shoppingCartModel.getShoppingProducts();
-
-    const itemCardsBasket = basketItems.map((item, index) => {
-        const cardBasketContainer = cloneTemplate('#card-basket');
-        //Проверить обработчик
-        const cardBasket = new CardBasket(cardBasketContainer, {
-            onClick: () => shoppingCartModel.deleteProductFromCart(item.id)
-        });
-        return cardBasket.render({...item, index: index + 1});
-    });
-    modal.render({ content: basket.render({ basketList: itemCardsBasket,
-        basketPrice: shoppingCartModel.getCostShoppingProducts()
-     })});
+    modal.render({ content: basket.render()});
     modal.open();
+});
+
+events.on('basket:checkout', () => {
+  modal.render({ content: formOrder.render()});
+});
+
+events.on('order:payment:card', () => {
+    customerModel.setCustomerData({payment: 'card'});
+});
+
+events.on('order:payment:cash', () => {
+    customerModel.setCustomerData({payment: 'cash'});
+});
+
+events.on('order:address:change', (data: {address: string}) => {
+    customerModel.setCustomerData({address: data.address});
+});
+
+events.on('customer:changed', () => {
+    let validOrder = ((!customerModel.validationData().address)&&(!customerModel.validationData().payment));
+    
+    console.log(customerModel.validationData().address, customerModel.validationData().payment, validOrder);
+    formOrder.render({
+        address: customerModel.getCustomerData().address, 
+        payment: customerModel.getCustomerData().payment,
+        errors: {address: customerModel.validationData().address, 
+                payment: customerModel.validationData().payment
+        },
+        buttonDisabled: !validOrder
+    })
+
+    
 });
 
 async function loadProducts() {

@@ -1,9 +1,10 @@
+import { IValidationErrors } from "../../../types";
 import { ensureElement } from "../../../utils/utils";
 import { Component } from "../../base/Component";
 import { IEvents } from "../../base/Events";
 
 export interface IForm {
-  errors: string;
+  errors: IValidationErrors;
   buttonDisabled: boolean;
 }
 
@@ -23,8 +24,9 @@ export abstract class Form<T extends IForm> extends Component<T> {
     });
   }
 
-  set errors(value: string) {
-    this.errorsFormElement.textContent = value;
+  set errors(errors: IValidationErrors) {
+    const errorText = Object.values(errors).join('\n');
+    this.errorsFormElement.textContent = errorText;
   }
 
   set buttonDisabled(value: boolean){

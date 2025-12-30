@@ -21,7 +21,7 @@ export class Modal extends Component<IModal> {
     });
 
     this.container.addEventListener('click', (evt: MouseEvent) => {
-      if ((evt.target instanceof Element) && (!(evt.target.closest('.modal__container')))) {
+      if (evt.target === this.container) {
         this.events.emit('modal:close');
       }
     });
@@ -41,5 +41,7 @@ export class Modal extends Component<IModal> {
 
   close() {
     this.container.classList.remove('modal_active');
+    console.log('Modal.close() вызван! Stack trace:');
+    console.trace(); // ← покажет КТО вызвал
   }
 }
