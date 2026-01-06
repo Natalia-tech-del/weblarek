@@ -13,11 +13,7 @@ export class Gallery extends Component<IGallery> {
   }
 
   set catalog(items: HTMLElement[]) {
-    if (!items || (items.length === 0)) {
-      this.catalogElement.replaceChildren();
-    } else {
     this.catalogElement.replaceChildren(...items);
-    }
   }
 }
 

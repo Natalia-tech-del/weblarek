@@ -18,16 +18,12 @@ export class FormOrder extends Form<IFormOrder> {
     this.inputFieldAddress = ensureElement<HTMLInputElement>('input[name="address"]', this.container);
     
     this.formButtonCard.addEventListener('click', () => {
-      this.events.emit('order:payment:card');
+      this.onInputChange('payment', 'card');
     });
 
     this.formButtonCash.addEventListener('click', () => {
-      this.events.emit('order:payment:cash');
+      this.onInputChange('payment', 'cash');
     });
-
-    this.inputFieldAddress.addEventListener('input', () => {
-      this.events.emit('order:address:change', {address: this.inputFieldAddress.value});
-    })
   }
 
   set address(value: string) {

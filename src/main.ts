@@ -17,7 +17,7 @@ import { CardBasket } from './components/views/Card/CardBasket';
 import { Basket } from './components/views/Basket';
 import { FormOrder } from './components/views/Form/FormOrder';
 import { FormContacts } from './components/views/Form/FormContacts';
-import { IOrder, IOrderSuccess, IProduct } from './types';
+import { IBuyer, IOrder, IOrderSuccess, IProduct } from './types';
 
 const baseApi = new Api(API_URL);
 const webApiModel = new WebLarekApi(baseApi);
@@ -77,43 +77,57 @@ events.on('catalog:changed', () => {
         const cardCatalog = new CardCatalog(cardCatalogContainer, {
             onClick: () => events.emit('card:select', item)
         });
-        return cardCatalog.render({...item, image: {src: CDN_URL + item.image, alt: item.title}});
+        return cardCatalog.render({...item, image: {src: CDN_URL + item.image.replace(/\.svg$/i, '.png'), alt: item.title}});
     });
     gallery.render({ catalog: itemCards });
 });
 
 events.on('card:select', (item: IProduct) => { 
     productsCatalog.selectProduct(item);
-    let buttonText;
-    const inCart = shoppingCartModel.isProductInCart(item.id);
-    
-    if (!item.price) {
-        buttonText = 'Недоступно';
-    } else  if (inCart) {
-        buttonText = "Удалить из корзины";
-    } else {
-        buttonText = 'Купить';
+});
+
+events.on('selectProduct:changed', () => {
+    const data = getSelectedProductStatus();
+    if (!data) {
+        return;
     }
-    modal.render({ content: cardPreview.render({...item, 
-        image: {src: CDN_URL + item.image, alt: item.title},
-        buttonText,
-        buttonDisabled: !item.price
-    })})
-    modal.open();
+    const {productSelected, inCart} = data;
+    let buttonText;
+        
+    if (!productSelected.price) {
+            buttonText = 'Недоступно';
+        } else  if (inCart) {
+            buttonText = "Удалить из корзины";
+        } else {
+            buttonText = 'Купить';
+        }
+        modal.render({ content: cardPreview.render({...productSelected, 
+            image: {src: CDN_URL + productSelected.image.replace(/\.svg$/i, '.png'), alt: productSelected.title},
+            buttonText,
+            buttonDisabled: !productSelected.price
+        })});
+        modal.open();
 });
 
-events.on('modal:close', () => {
-    modal.close();
-});
-
-events.on('cardPreview:buttonClick', () => {
+const getSelectedProductStatus = () => {
     const productSelected = productsCatalog.getSelectedProduct();
     
     if (!productSelected) {
-        return;
+        return null;
     }
 
-    const inCart = shoppingCartModel.isProductInCart(productSelected.id);
+    return {
+        productSelected,
+        inCart: shoppingCartModel.isProductInCart(productSelected.id)
+    }
+}
+
+events.on('cardPreview:buttonClick', () => {
+    const data = getSelectedProductStatus();
+    if (!data) {
+        return;
+    }
+    const {productSelected, inCart} = data;
 
     if (inCart) {
         shoppingCartModel.deleteProductFromCart(productSelected.id);
@@ -129,31 +143,31 @@ events.on('basket:open', () => {
 });
 
 events.on('basket:checkout', () => {
-  modal.render({ content: formOrder.render()});
+  modal.render({ content: formOrder.render({errors: ''})});
 });
 
-events.on('order:payment:card', () => {
-    customerModel.setCustomerData({payment: 'card'});
+events.on('form:change', (data: {field: keyof IBuyer, value: string}) => {
+    customerModel.setCustomerData({[data.field]: data.value});
 });
 
-events.on('order:payment:cash', () => {
-    customerModel.setCustomerData({payment: 'cash'});
+events.on('customer:changed', (data: {field: string}) => {
+    const field = data.field;
+    if (field === 'payment' || field === 'address') {
+        formOrderRender();
+    }
+
+    if (field === 'email' || field === 'phone') {
+        formContactsRender();
+    }
+
+    if (field === 'all') {
+        formOrderRender();
+        formContactsRender();
+    }  
 });
 
-events.on('order:address:change', (data: {address: string}) => {
-    customerModel.setCustomerData({address: data.address});
-});
-
-events.on('contacts:email:change', (data: {email: string}) => {
-    customerModel.setCustomerData({email: data.email});
-})
-
-events.on('contacts:phone:change', (data: {phone: string}) => {
-    customerModel.setCustomerData({phone: data.phone});
-})
-
-events.on('customer:changed', () => {
-    let validOrder = ((!customerModel.validationData().address)&&(!customerModel.validationData().payment));
+function formOrderRender() {
+    const validOrder = ((!customerModel.validationData().address)&&(!customerModel.validationData().payment));
     
     formOrder.render({
         address: customerModel.getCustomerData().address, 
@@ -162,9 +176,11 @@ events.on('customer:changed', () => {
                 payment: customerModel.validationData().payment
         },
         buttonDisabled: !validOrder
-    })
+    });
+}
 
-    let validContacts = ((!customerModel.validationData().email)&&(!customerModel.validationData().phone));
+function formContactsRender() {
+    const validContacts = ((!customerModel.validationData().email)&&(!customerModel.validationData().phone));
 
     formContacts.render({
         email: customerModel.getCustomerData().email, 
@@ -173,8 +189,8 @@ events.on('customer:changed', () => {
                 phone: customerModel.validationData().phone
         },
         buttonDisabled: !validContacts
-    })
-});
+    });
+}
 
 events.on('order:submit', () => {
     modal.render({ content: formContacts.render({errors: ''})});

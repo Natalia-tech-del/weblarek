@@ -22,14 +22,28 @@ export abstract class Form<T extends IForm> extends Component<T> {
       evt.preventDefault();
       this.events.emit(`${this.container.getAttribute('name')}:submit`);
     });
+
+    this.container.addEventListener('input', (evt: Event) => {
+      const target = evt.target as HTMLInputElement;
+      const field = target.name as keyof T;  // Т - дженерик, который класс Form принимает
+      const value = target.value;
+      this.onInputChange(field, value);
+    });
   }
+
+  protected onInputChange(field: keyof T, value: string) {
+    this.events.emit('form:change', {
+      field,
+      value,
+    });
+  } 
 
   set errors(errors: IValidationErrors | '') {
     if (errors === '') {
       this.errorsFormElement.textContent = errors;
       return;
     }
-    const errorText = Object.values(errors).join('\n');
+    const errorText = Object.values(errors).filter(e => e).join('; ');
     this.errorsFormElement.textContent = errorText;
   }
 

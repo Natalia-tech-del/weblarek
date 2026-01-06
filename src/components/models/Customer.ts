@@ -17,17 +17,20 @@ export class Customer {
     setCustomerData(data: Partial<IBuyer>): void {
         if (data.payment !== undefined) {
             this.payment = data.payment;
+            this.events.emit('customer:changed', {field: 'payment'});
         }
         if (data.email !== undefined) {
             this.email = data.email;
+            this.events.emit('customer:changed', {field: 'email'});
         }
         if (data.phone !== undefined) {
             this.phone = data.phone;
+            this.events.emit('customer:changed', {field: 'phone'});
         }
         if (data.address !== undefined) {
             this.address = data.address;
+            this.events.emit('customer:changed', {field: 'address'});
         }
-        this.events.emit('customer:changed');
     }
 
     getCustomerData(): IBuyer {
@@ -44,7 +47,7 @@ export class Customer {
         this.email = '';
         this.phone = '';
         this.address = '';
-        this.events.emit('customer:changed');
+        this.events.emit('customer:changed', {field: 'all'});
     } 
 
     validationData(): IValidationErrors {
@@ -63,5 +66,4 @@ export class Customer {
         }
         return errors;
     }
-
 }

@@ -1,28 +1,21 @@
-import { categoryMap } from "../../../utils/constants";
 import { ensureElement } from "../../../utils/utils";
-import { TCard, Card } from "./Card";
-import { IProduct, CategoryKey } from "../../../types";
+import { IProduct } from "../../../types";
 import { IEvents } from "../../base/Events";
+import { CardWithCategoryImage, TCardWithCategoryImage } from "./CardWithCategoryImage";
 
 
-export type TCardPreview = TCard & 
-  Pick<IProduct, 'category' | 'description'> & {
-    image: { src: string; alt: string };
+export type TCardPreview = TCardWithCategoryImage & 
+  Pick<IProduct, 'description'> & {
     buttonText: string;
     buttonDisabled: boolean;
   };
 
-export class CardPreview extends Card<TCardPreview> {
-  protected imageElement: HTMLImageElement;
-  protected categoryElement: HTMLElement;
+export class CardPreview extends CardWithCategoryImage<TCardPreview> {
   protected textElement: HTMLElement;
   protected cardButton: HTMLButtonElement;
 
   constructor(protected events: IEvents, container: HTMLElement) {
     super(container);
-    this.categoryElement = ensureElement<HTMLElement>('.card__category',this.container);
-
-    this.imageElement = ensureElement<HTMLImageElement>('.card__image',this.container);
 
     this.textElement = ensureElement<HTMLElement>('.card__text', this.container);
 
@@ -33,18 +26,6 @@ export class CardPreview extends Card<TCardPreview> {
     });
   }
 
-  set category(value: string) {
-    this.categoryElement.textContent = value;
-
-    for (const key in categoryMap) {
-      this.categoryElement.classList.toggle(categoryMap[key as CategoryKey], key === value);
-    }
-  }
-
-  set image(data: {src: string, alt: string}) {
-    this.setImage(this.imageElement, data.src, data.alt);
-  }
-  
   set description(value: string) {
     this.textElement.textContent = value;
   }

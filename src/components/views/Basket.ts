@@ -4,7 +4,6 @@ import { IEvents } from "../base/Events";
 
 interface IBasket {
   basketList: HTMLElement[];
-  buttonDisabled: boolean;
   basketPrice: number;
 }
 
@@ -19,7 +18,7 @@ export class Basket extends Component<IBasket> {
     this.basketListElement = ensureElement<HTMLElement>('.basket__list', this.container);
     this.priceElement = ensureElement<HTMLElement>('.basket__price', this.container);
     this.checkoutButton = ensureElement<HTMLButtonElement>('.basket__button', this.container);
-    this.buttonDisabled = true;
+    this.checkoutButton.disabled = true;
     this.checkoutButton.addEventListener('click', () => {
       this.events.emit('basket:checkout');
     });
@@ -27,11 +26,7 @@ export class Basket extends Component<IBasket> {
 
   set basketList(items: HTMLElement[]) {
     this.basketListElement.replaceChildren(...items);
-    this.buttonDisabled = items.length === 0;
-  }
-
-  set buttonDisabled(value: boolean){
-    this.checkoutButton.disabled = value;
+    this.checkoutButton.disabled = items.length === 0;
   }
 
   set basketPrice(value: number) {
