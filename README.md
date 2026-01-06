@@ -683,3 +683,6 @@ interface IFormContacts extends IForm, Pick<IBuyer, 'email' | 'phone'> {}
 #### Вспомогательные функции Презентера: 
 `loadProducts(): Promise<void>` - загружает товары с сервера.
 `postOrder(data: IOrder): Promise<IResultOrder>` - отправляет данные заказа на сервер.
+`getSelectedProductStatus(): {productSelected: IProduct | null, inCart: boolean} | null` - Получает выбранный товар и проверяет, находится ли он в корзине.
+`formOrderRender(): void` - перерисовывает форму заказа.
+`formContactsRender(): void` - перерисовывает форму контактов.
