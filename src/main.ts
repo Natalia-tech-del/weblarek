@@ -17,7 +17,7 @@ import { CardBasket } from './components/views/Card/CardBasket';
 import { Basket } from './components/views/Basket';
 import { FormOrder } from './components/views/Form/FormOrder';
 import { FormContacts } from './components/views/Form/FormContacts';
-import { IBuyer, IOrder, IOrderSuccess, IProduct } from './types';
+import { IBuyer, ICardFactory, IOrder, IOrderSuccess, IProduct } from './types';
 import { Presenter } from './components/presenter/Presenter';
 
 const baseApi = new Api(API_URL);
@@ -72,6 +72,23 @@ events.on('cart:changed', () => {
 });
 */
 
+const cardFactory: ICardFactory = {
+    createCardBasket(item: IProduct, index: number, onDelete: () => void ): HTMLElement {
+        const cardBasketContainer = cloneTemplate('#card-basket');
+        const cardBasket = new CardBasket(cardBasketContainer, {
+            onClick: onDelete
+        });
+        return cardBasket.render({...item, index: index + 1});
+    },
+    createCardCatalog(item: IProduct, onSelect: () => void ): HTMLElement {
+         const cardCatalogContainer = cloneTemplate('#card-catalog');
+            const cardCatalog = new CardCatalog(cardCatalogContainer, {
+                onClick: onSelect
+            });
+            return cardCatalog.render({...item, image: {src: CDN_URL + item.image.replace(/\.svg$/i, '.png'), alt: item.title}});
+    }
+}
+/*
 events.on('catalog:changed', () => {
     const catalogItems = productsCatalog.getItems();
    	const itemCards = catalogItems.map(item => {
@@ -82,7 +99,7 @@ events.on('catalog:changed', () => {
         return cardCatalog.render({...item, image: {src: CDN_URL + item.image.replace(/\.svg$/i, '.png'), alt: item.title}});
     });
     gallery.render({ catalog: itemCards });
-});
+}); */
 
 events.on('card:select', (item: IProduct) => { 
     productsCatalog.selectProduct(item);
