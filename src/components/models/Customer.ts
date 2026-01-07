@@ -1,7 +1,7 @@
-import { TPayment, IBuyer, IValidationErrors } from "../../types";
+import { TPayment, IBuyer, IValidationErrors, ICustomer } from "../../types";
 import { IEvents } from "../base/Events";
 
-export class Customer {
+export class Customer implements ICustomer{
     private payment: TPayment; 
     private email: string;
     private phone: string; 

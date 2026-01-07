@@ -1,13 +1,13 @@
 import { ensureElement } from "../../utils/utils";
 import { Component } from "../base/Component";
 import { IEvents } from "../base/Events";
-
+import { IComponent } from "../../types";
 interface IBasket {
   basketList: HTMLElement[];
   basketPrice: number;
 }
 
-export class Basket extends Component<IBasket> {
+export class Basket extends Component<IBasket> implements IComponent {
   protected basketListElement: HTMLElement;
   protected checkoutButton: HTMLButtonElement;
   protected priceElement: HTMLElement;

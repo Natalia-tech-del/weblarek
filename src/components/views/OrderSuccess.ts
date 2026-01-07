@@ -1,12 +1,13 @@
 import { ensureElement } from "../../utils/utils";
 import { Component } from "../base/Component";
 import { IEvents } from "../base/Events";
+import { IComponent } from "../../types";
 
 interface IOrderSuccess {
   successCost: number;
 }
 
-export class OrderSuccess extends Component<IOrderSuccess> {
+export class OrderSuccess extends Component<IOrderSuccess> implements IComponent {
   protected orderSuccessElement: HTMLElement;
   protected successCloseButton: HTMLButtonElement;
 

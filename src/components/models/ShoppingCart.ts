@@ -1,7 +1,7 @@
-import { IProduct } from "../../types";
+import { IProduct, IShoppingCart } from "../../types";
 import { IEvents } from "../base/Events";
 
-export class ShoppingCart {
+export class ShoppingCart implements IShoppingCart{
     private shoppingProducts: IProduct[];
 
     constructor(protected events: IEvents) {

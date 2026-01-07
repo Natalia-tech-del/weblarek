@@ -2,10 +2,11 @@ import { IBuyer, TPayment } from "../../../types";
 import { Form, IForm } from "./Form";
 import { ensureElement } from "../../../utils/utils";
 import { IEvents } from "../../base/Events";
+import { IComponent } from "../../../types";
 
 export interface IFormOrder extends IForm, Pick<IBuyer, 'address' | 'payment'> {}
 
-export class FormOrder extends Form<IFormOrder> {
+export class FormOrder extends Form<IFormOrder> implements IComponent {
   protected formButtonCard: HTMLButtonElement;
   protected formButtonCash: HTMLButtonElement;
   protected inputFieldAddress: HTMLInputElement;

@@ -2,10 +2,11 @@ import { IBuyer} from "../../../types";
 import { Form, IForm } from "./Form";
 import { ensureElement } from "../../../utils/utils";
 import { IEvents } from "../../base/Events";
+import { IComponent } from "../../../types";
 
 export interface IFormContacts extends IForm, Pick<IBuyer, 'email' | 'phone'> {}
 
-export class FormContacts extends Form<IFormContacts> {
+export class FormContacts extends Form<IFormContacts> implements IComponent {
   protected inputFieldEmail: HTMLInputElement;
   protected inputFieldPhone: HTMLInputElement;
 

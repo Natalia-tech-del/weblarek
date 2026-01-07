@@ -58,3 +58,42 @@ export interface ICardActions {
 
 export type CategoryKey = keyof typeof categoryMap;
 
+export interface IWebLarekApi {
+    getProducts(): Promise<IProduct[]>;
+    postOrder(data: IOrder): Promise<IResultOrder>;
+}
+
+export interface ICustomer {
+    setCustomerData(data: Partial<IBuyer>): void;
+    getCustomerData(): IBuyer;
+    clearCustomerData(): void;
+    validationData(): IValidationErrors;
+}
+
+export interface IProductCatalog {
+    getItems(): IProduct[];
+    setItems(items: IProduct[]): void;
+    getProductById(id: string): IProduct | undefined;
+    selectProduct(product: IProduct): void;
+    getSelectedProduct(): IProduct | null;
+}
+
+export interface IShoppingCart {
+    getShoppingProducts(): IProduct[];
+    addProductToCart(product: IProduct): void;
+    deleteProductFromCart(id: string): void;
+    clearShoppingCart(): void;
+    getCostShoppingProducts(): number;
+    getItemsCount(): number;
+    isProductInCart(id: string): boolean;
+}
+
+export interface IComponent {
+    render(data?: object): HTMLElement;
+}
+
+
+export interface IModalComponent extends IComponent{
+    open(): void;
+    close(): void;
+}

@@ -2,6 +2,7 @@ import { ensureElement } from "../../../utils/utils";
 import { IProduct } from "../../../types";
 import { IEvents } from "../../base/Events";
 import { CardWithCategoryImage, TCardWithCategoryImage } from "./CardWithCategoryImage";
+import { IComponent } from "../../../types";
 
 
 export type TCardPreview = TCardWithCategoryImage & 
@@ -10,7 +11,7 @@ export type TCardPreview = TCardWithCategoryImage &
     buttonDisabled: boolean;
   };
 
-export class CardPreview extends CardWithCategoryImage<TCardPreview> {
+export class CardPreview extends CardWithCategoryImage<TCardPreview> implements IComponent {
   protected textElement: HTMLElement;
   protected cardButton: HTMLButtonElement;
 

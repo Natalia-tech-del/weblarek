@@ -1,10 +1,11 @@
 import { Component } from "../base/Component";
+import { IComponent } from "../../types";
 
 interface IGallery {
   catalog: HTMLElement[];
 }
 
-export class Gallery extends Component<IGallery> {
+export class Gallery extends Component<IGallery> implements IComponent {
   protected catalogElement: HTMLElement;
 
   constructor(container: HTMLElement) {

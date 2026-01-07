@@ -18,6 +18,7 @@ import { Basket } from './components/views/Basket';
 import { FormOrder } from './components/views/Form/FormOrder';
 import { FormContacts } from './components/views/Form/FormContacts';
 import { IBuyer, IOrder, IOrderSuccess, IProduct } from './types';
+import { Presenter } from './components/presenter/Presenter';
 
 const baseApi = new Api(API_URL);
 const webApiModel = new WebLarekApi(baseApi);
@@ -51,7 +52,7 @@ const formContacts = new FormContacts(events, formContactsContainer);
 
 const orderSuccessContainer = cloneTemplate('#success');
 const orderSuccess = new OrderSuccess(events, orderSuccessContainer);
-
+/*
 events.on('cart:changed', () => {
     header.render({ counter: shoppingCartModel.getItemsCount()});
 
@@ -69,6 +70,7 @@ events.on('cart:changed', () => {
         basketPrice: shoppingCartModel.getCostShoppingProducts()
      });
 });
+*/
 
 events.on('catalog:changed', () => {
     const catalogItems = productsCatalog.getItems();
@@ -211,14 +213,14 @@ events.on('contacts:submit', async () => {
 events.on('order:success', () => {
     modal.close();
 });
-
+/*
 async function loadProducts() {
     try {
         productsCatalog.setItems(await webApiModel.getProducts()); 
     } catch (error){
         console.error('Ошибка загрузки', error);
     }
-}
+}*/
 
 async function postOrder(data:IOrder) {
     try {
@@ -229,4 +231,10 @@ async function postOrder(data:IOrder) {
     }
 }
 
-loadProducts();
+//loadProducts();
+
+
+
+
+//const presenter = new Presenter();
+//presenter.init();

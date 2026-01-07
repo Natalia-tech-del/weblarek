@@ -1,7 +1,7 @@
-import { IProduct } from "../../types";
+import { IProduct, IProductCatalog } from "../../types";
 import { IEvents } from "../base/Events";
 
-export class ProductCatalog {
+export class ProductCatalog implements IProductCatalog{
     private products: IProduct[];
     private selectedProduct: IProduct | null;
 
