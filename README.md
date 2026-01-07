@@ -675,14 +675,85 @@ interface IFormContacts extends IForm, Pick<IBuyer, 'email' | 'phone'> {}
 `cart:changed` - обработка события - данные корзины изменены. 
 `selectProduct:changed` - обработка события - сохранение выбранной для превью карточки.              
 
-### Презентер (main.ts)
+### Презентер (класс Presenter.ts)
 
-Презентер реализован в главном файле приложения main.ts, выполняет роль связующего слоя по паттерну MVP. 
+Презентер реализован в отдельном классе, выполняет роль связующего слоя по паттерну MVP. 
 Презентер состоит из обработчиков событий. Его задача — реагировать на события от компонентов Представления (View) и Модели (Model), выполнять бизнес-логику и координировать обновление интерфейса.
 
-#### Вспомогательные функции Презентера: 
+Для соблюдения принципа инверсии зависимостей были созданы следующие интерфейсы: 
+
+*Структура:* 
+```typescript
+export interface IWebLarekApi {
+    getProducts(): Promise<IProduct[]>;
+    postOrder(data: IOrder): Promise<IResultOrder>;
+}
+
+export interface ICustomer {
+    setCustomerData(data: Partial<IBuyer>): void;
+    getCustomerData(): IBuyer;
+    clearCustomerData(): void;
+    validationData(): IValidationErrors;
+}
+
+export interface IProductCatalog {
+    getItems(): IProduct[];
+    setItems(items: IProduct[]): void;
+    getProductById(id: string): IProduct | undefined;
+    selectProduct(product: IProduct): void;
+    getSelectedProduct(): IProduct | null;
+}
+
+export interface IShoppingCart {
+    getShoppingProducts(): IProduct[];
+    addProductToCart(product: IProduct): void;
+    deleteProductFromCart(id: string): void;
+    clearShoppingCart(): void;
+    getCostShoppingProducts(): number;
+    getItemsCount(): number;
+    isProductInCart(id: string): boolean;
+}
+
+export interface IComponent {
+    render(data?: object): HTMLElement;
+}
+
+export interface IModalComponent extends IComponent{
+    open(): void;
+    close(): void;
+}
+
+export interface ICardFactory {
+    createCardBasket(item: IProduct, index: number, onDelete: () => void ): HTMLElement;
+    createCardCatalog(item: IProduct, onSelect: () => void ): HTMLElement;
+}
+```
+
+#### Класс Presenter
+
+Конструктор:  
+`constructor(protected events: IEvents, protected webLarekApi: IWebLarekApi, protected customer: ICustomer,protected productCatalog: IProductCatalog, protected shoppingCart: IShoppingCart, protected cardPreview: IComponent, protected formContacts: IComponent, protected formOrder: IComponent, protected basket: IComponent,protected gallery: IComponent, protected header: IComponent, protected modal: IModalComponent, protected orderSuccess: IComponent, protected cardFactory: ICardFactory, protected CDN_URL: string )` - принимает экземпляры брокера событий всех  классов моделей и всех классов представлений, кроме экземпляра карточки каталога и козины. В конструкторе происходит их сохранение в поля класса.
+
+Поля класса:  
+`events: IEvents` - экземпляр брокера событий.
+`webLarekApi: IWebLarekApi` - экземпляр `IWebLarekApi`.
+`customer: ICustomer` - экземпляр модели покупателя.
+`productCatalog: IProductCatalog` - экземпляр модели каталога товаров.
+`shoppingCart: IShoppingCart` - экземпляр модели корзины покупок.
+`cardPreview: IComponent` - экземпляр компонента карточки превью.
+`formContacts: IComponent` - экземпляр компонента формы с контактами.
+`formOrder: IComponent` - экземпляр компонента формы заказа с адресом и видом оплаты.
+`basket: IComponent` - экземпляр компонента корзины.
+`gallery: IComponent` - экземпляр компонента галереи.
+`header: IComponent` - экземпляр компонента шапки.
+`modal: IModalComponent` - экземпляр компонента модального окна.
+`orderSuccess: IComponent` - экземпляр компонента компонента успешного заказа.
+`cardFactory: ICardFactory` - объект с методами для создания карточек товаров для каталога и корзины.
+`CDN_URL: string` - URL для загрузки изображений товаров.
+
+Методы класса:  
 `loadProducts(): Promise<void>` - загружает товары с сервера.
 `postOrder(data: IOrder): Promise<IResultOrder>` - отправляет данные заказа на сервер.
-`getSelectedProductStatus(): {productSelected: IProduct | null, inCart: boolean} | null` - Получает выбранный товар и проверяет, находится ли он в корзине.
+`getSelectedProductStatus(): {productSelected: IProduct; inCart: boolean} | null` - получает выбранный товар и проверяет, находится ли он в корзине.
 `formOrderRender(): void` - перерисовывает форму заказа.
 `formContactsRender(): void` - перерисовывает форму контактов.

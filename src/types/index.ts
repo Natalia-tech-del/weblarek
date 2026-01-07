@@ -92,7 +92,6 @@ export interface IComponent {
     render(data?: object): HTMLElement;
 }
 
-
 export interface IModalComponent extends IComponent{
     open(): void;
     close(): void;
@@ -100,5 +99,5 @@ export interface IModalComponent extends IComponent{
 
 export interface ICardFactory {
     createCardBasket(item: IProduct, index: number, onDelete: () => void ): HTMLElement;
-    createCardCatalog(item: IProduct, onDelete: () => void ): HTMLElement;
+    createCardCatalog(item: IProduct, onSelect: () => void ): HTMLElement;
 }
