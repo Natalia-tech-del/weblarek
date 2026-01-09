@@ -723,16 +723,15 @@ export interface IModalComponent extends IComponent{
     close(): void;
 }
 
-export interface ICardFactory {
-    createCardBasket(item: IProduct, index: number, onDelete: () => void ): HTMLElement;
-    createCardCatalog(item: IProduct, onSelect: () => void ): HTMLElement;
+export interface ICardConstructor {
+    new (container: HTMLElement, actions?: ICardActions): IComponent;
 }
 ```
 
 #### Класс Presenter
 
 Конструктор:  
-`constructor(protected events: IEvents, protected webLarekApi: IWebLarekApi, protected customer: ICustomer,protected productCatalog: IProductCatalog, protected shoppingCart: IShoppingCart, protected cardPreview: IComponent, protected formContacts: IComponent, protected formOrder: IComponent, protected basket: IComponent,protected gallery: IComponent, protected header: IComponent, protected modal: IModalComponent, protected orderSuccess: IComponent, protected cardFactory: ICardFactory, protected CDN_URL: string )` - принимает экземпляры брокера событий всех  классов моделей и всех классов представлений, кроме экземпляра карточки каталога и козины. В конструкторе происходит их сохранение в поля класса.
+`constructor(protected events: IEvents, protected webLarekApi: IWebLarekApi, protected customer: ICustomer, protected productCatalog: IProductCatalog, protected shoppingCart: IShoppingCart, protected cardPreview: IComponent, protected formContacts: IComponent, protected formOrder: IComponent, protected basket: IComponent, protected gallery: IComponent, protected header: IComponent, protected modal: IModalComponent, protected orderSuccess: IComponent, protected CDN_URL: string, protected basketCardTemplate: HTMLTemplateElement, protected catalogCardTemplate: HTMLTemplateElement, protected cardBasketConstructor: ICardConstructor, protected cardCatalogConstructor: ICardConstructor )` - принимает экземпляры брокера событий, всех классов моделей и всех классов представлений, кроме экземпляра карточки каталога и корзины, элементы шаблонов, а также а также объекты, соответствующие интерфейсам конструкторов для создания карточек корзины и каталога. В конструкторе происходит их сохранение в поля класса.
 
 Поля класса:  
 `events: IEvents` - экземпляр брокера событий.
@@ -748,10 +747,14 @@ export interface ICardFactory {
 `header: IComponent` - экземпляр компонента шапки.
 `modal: IModalComponent` - экземпляр компонента модального окна.
 `orderSuccess: IComponent` - экземпляр компонента компонента успешного заказа.
-`cardFactory: ICardFactory` - объект с методами для создания карточек товаров для каталога и корзины.
 `CDN_URL: string` - URL для загрузки изображений товаров.
+`basketCardTemplate: HTMLTemplateElement` - шаблон для создания карточки корзины.
+`catalogCardTemplate: HTMLTemplateElement` - шаблон для создания карточки каталога.
+`cardBasketConstructor: ICardConstructor` - экземпляр, соответствующий интерфейсу конструктора для создания карточки корзины.
+`cardCatalogConstructor: ICardConstructor` - экземпляр, соответствующий интерфейсу конструктора для создания карточки каталога.
 
 Методы класса:  
+`init(): void` - инициализирует презентер, подписываясь на все необходимые события и запуская загрузку товаров.
 `loadProducts(): Promise<void>` - загружает товары с сервера.
 `postOrder(data: IOrder): Promise<IResultOrder>` - отправляет данные заказа на сервер.
 `getSelectedProductStatus(): {productSelected: IProduct; inCart: boolean} | null` - получает выбранный товар и проверяет, находится ли он в корзине.

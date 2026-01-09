@@ -97,7 +97,6 @@ export interface IModalComponent extends IComponent{
     close(): void;
 }
 
-export interface ICardFactory {
-    createCardBasket(item: IProduct, index: number, onDelete: () => void ): HTMLElement;
-    createCardCatalog(item: IProduct, onSelect: () => void ): HTMLElement;
+export interface ICardConstructor {
+    new (container: HTMLElement, actions?: ICardActions): IComponent;
 }

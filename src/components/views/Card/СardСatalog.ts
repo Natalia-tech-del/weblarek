@@ -1,7 +1,8 @@
 import { CardWithCategoryImage, TCardWithCategoryImage } from "./CardWithCategoryImage";
 import { ICardActions } from "../../../types";
+import { IComponent } from "../../../types";
 
-export class CardCatalog extends CardWithCategoryImage<TCardWithCategoryImage> {
+export class CardCatalog extends CardWithCategoryImage<TCardWithCategoryImage> implements IComponent {
   
   constructor(container: HTMLElement, actions?: ICardActions) {
     super(container);

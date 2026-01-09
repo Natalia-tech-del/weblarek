@@ -1,10 +1,11 @@
 import { ensureElement } from "../../../utils/utils";
 import { TCard, Card } from "./Card";
 import { ICardActions } from "../../../types";
+import { IComponent } from "../../../types";
 
 export type TCardBasket = TCard & { index: number};
 
-export class CardBasket extends Card<TCardBasket> {
+export class CardBasket extends Card<TCardBasket> implements IComponent {
   protected itemIndexElement: HTMLElement;
   protected basketDeleteButton: HTMLButtonElement;
 

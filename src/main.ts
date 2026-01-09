@@ -17,8 +17,8 @@ import { CardBasket } from './components/views/Card/CardBasket';
 import { Basket } from './components/views/Basket';
 import { FormOrder } from './components/views/Form/FormOrder';
 import { FormContacts } from './components/views/Form/FormContacts';
-import { ICardFactory, IProduct } from './types';
 import { Presenter } from './components/presenter/Presenter';
+import { ensureElement } from './utils/utils';
 
 const baseApi = new Api(API_URL);
 const webApiModel = new WebLarekApi(baseApi);
@@ -53,27 +53,14 @@ const formContacts = new FormContacts(events, formContactsContainer);
 const orderSuccessContainer = cloneTemplate('#success');
 const orderSuccess = new OrderSuccess(events, orderSuccessContainer);
 
-const cardFactory: ICardFactory = {
-    createCardBasket(item: IProduct, index: number, onDelete: () => void ): HTMLElement {
-        const cardBasketContainer = cloneTemplate('#card-basket');
-        const cardBasket = new CardBasket(cardBasketContainer, {
-            onClick: onDelete
-        });
-        return cardBasket.render({...item, index: index + 1});
-    },
-    createCardCatalog(item: IProduct, onSelect: () => void ): HTMLElement {
-         const cardCatalogContainer = cloneTemplate('#card-catalog');
-            const cardCatalog = new CardCatalog(cardCatalogContainer, {
-                onClick: onSelect
-            });
-            return cardCatalog.render({...item, image: {src: CDN_URL + item.image.replace(/\.svg$/i, '.png'), alt: item.title}});
-    }
-}
+const basketCardTemplate = ensureElement('#card-basket') as HTMLTemplateElement;
+const catalogCardTemplate = ensureElement('#card-catalog') as HTMLTemplateElement;
 
 const presenter = new Presenter(events, webApiModel, customerModel, 
     productsCatalog, shoppingCartModel,
     cardPreview, formContacts, formOrder, basket, gallery,
-    header, modal, orderSuccess, cardFactory, CDN_URL
+    header, modal, orderSuccess, CDN_URL, basketCardTemplate, catalogCardTemplate,
+    CardBasket, CardCatalog
 );
 
 presenter.init();

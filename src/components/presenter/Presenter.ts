@@ -1,9 +1,9 @@
 import { IEvents } from "../base/Events";
 import { IWebLarekApi, ICustomer, IProductCatalog, IShoppingCart, IComponent, 
-  IModalComponent, ICardFactory, IProduct, IBuyer, IOrder, IOrderSuccess } from "../../types";
+  IModalComponent, IProduct, IBuyer, IOrder, IOrderSuccess, ICardConstructor } from "../../types";
+import { cloneTemplate } from "../../utils/utils";
 
 export class Presenter {
-
   constructor(
     protected events: IEvents,
     protected webLarekApi: IWebLarekApi,
@@ -18,8 +18,11 @@ export class Presenter {
     protected header: IComponent,
     protected modal: IModalComponent,
     protected orderSuccess: IComponent,
-    protected cardFactory: ICardFactory,
-    protected CDN_URL: string
+    protected CDN_URL: string,
+    protected basketCardTemplate: HTMLTemplateElement,
+    protected catalogCardTemplate: HTMLTemplateElement,
+    protected cardBasketConstructor: ICardConstructor,
+    protected cardCatalogConstructor: ICardConstructor
   ) {}
 
   init() {
@@ -29,11 +32,14 @@ export class Presenter {
         const basketItems = this.shoppingCart.getShoppingProducts();
     
         const itemCardsBasket = basketItems.map((item, index) => {
-            const handleDelete = () => {
-                this.shoppingCart.deleteProductFromCart(item.id);
-            }
-            return this.cardFactory.createCardBasket(item, index, handleDelete);
-        });
+            const cardBasketContainer = cloneTemplate(this.basketCardTemplate);
+            const cardBasket = new this.cardBasketConstructor(cardBasketContainer, {
+                onClick: () => { 
+                    this.shoppingCart.deleteProductFromCart(item.id);
+                }
+            });
+            return cardBasket.render({...item, index: index + 1});
+            });
         this.basket.render({ basketList: itemCardsBasket,
             basketPrice: this.shoppingCart.getCostShoppingProducts()
          });
@@ -42,10 +48,13 @@ export class Presenter {
     this.events.on('catalog:changed', () => {
         const catalogItems = this.productCatalog.getItems();
         const itemCards = catalogItems.map(item => {
-            const handleSelect = () => {
-              this.events.emit('card:select', item);
-            }
-            return this.cardFactory.createCardCatalog(item, handleSelect);
+            const cardCatalogContainer = cloneTemplate(this.catalogCardTemplate);
+            const cardCatalog = new this.cardCatalogConstructor(cardCatalogContainer, {
+                onClick: () => this.events.emit('card:select', item) 
+            });
+            return cardCatalog.render({...item, image: {src: this.CDN_URL + 
+                item.image.replace(/\.svg$/i, '.png'), alt: item.title}});
+
         });
         this.gallery.render({ catalog: itemCards });
     });
