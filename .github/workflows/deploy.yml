@@ -19,6 +19,7 @@ jobs:
         with:
           node-version: 20
       - run: npm ci
+      - run: echo "VITE_API_ORIGIN=${{ secrets.VITE_API_ORIGIN }}" >> .env
       - run: npm run build
       - run: cp dist/index.html dist/404.html
       - uses: actions/upload-pages-artifact@v3
